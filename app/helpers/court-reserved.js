@@ -51,10 +51,10 @@ export function courtReserved(params, hash) {
         let thisReservationIndex = reservationsInDay.toArray().findIndex((res) => res.get('id') === reserved.get('id'));
         let nextReservation = reservationsInDay.objectAt(thisReservationIndex + 1);
         if (Ember.isPresent(nextReservation)) {
-          let nextReservationStartHour = moment(nextReservation.get('startTime')).get('hour');
-          if (nextReservationStartHour === reservationEndHour){
-            return 'full-reserved';
-          }
+            let nextReservationStartHour = moment(nextReservation.get('startTime')).get('hour');
+            if (nextReservationStartHour === reservationEndHour) {
+                return 'full-reserved';
+            }
         }
 
         return 'half-end-reserved';
