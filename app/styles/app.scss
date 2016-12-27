@@ -1,0 +1,209 @@
+@import 'ember-paper';
+@import "ember-paper-config";
+@import "loading-indicator";
+$court-cell-dimension: 40px;
+$court-cell-border-color: #404040;
+
+body {
+    max-width: 100%;
+    max-height: 100%;
+    flex-direction: row;
+    flex: 1;
+    display: flex;
+}
+
+label {
+    font-weight: bold;
+}
+
+md-sidenav md-toolbar .md-toolbar-tools {
+    margin-top: 15px;
+    max-height: 100px;
+    height: 100px;
+}
+
+.hint {
+    color: lighten($dark-contrast-color, 50);
+}
+
+.logo {
+    font-size: 54px;
+    font-weight: 500;
+    width: 100%;
+    height: 100%;
+
+    img {
+        width: 50px;
+    }
+
+    div {
+        font-weight: bold;
+        margin-top: -20px;
+    }
+}
+
+.menu-item,
+.submenu-item {
+    min-height: 40px;
+
+    &.active,
+    &:hover {
+        background-color: rgba(158, 158, 158, 0.1);
+    }
+}
+
+.new-booking {
+    & > .flex {
+        margin-bottom: 15px;
+    }
+
+    .value {
+        color: lighten($dark-contrast-color, 30);
+    }
+
+    .notifications-hint {
+        margin: 0;
+    }
+
+    .duration {}
+}
+
+.tm-bookings {
+    .week-control-panel {
+        width: 100%;
+        text-align: center;
+        position: relative;
+
+        .week-title {
+            vertical-align: middle;
+        }
+
+        .jump-to-today {
+            display: inline-block;
+            right: 0;
+            position: absolute;
+            bottom: 0;
+
+            a {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .court-info-popup {
+        display: none;
+        position: absolute;
+        border: 1px solid black;
+        background-color: white;
+        padding: 10px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+
+        & > div {
+            margin-bottom: 5px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        &.visible {
+            display: inline-block;
+        }
+    }
+
+    .timetable {
+        & > md-card {
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            padding-right: 20px;
+        }
+
+        .timetable-day {
+            vertical-align: top;
+            text-align: center;
+            width: 200px;
+            display: inline-block;
+        }
+
+        .current-day-timetable md-card{
+          box-shadow: 0 0 23px 2px color($accent, '700');
+        }
+
+        .court-timetable-hours {
+            .court-cell.hour-cell {
+                border: none;
+                height: calc(#{$court-cell-dimension}/2);
+            }
+
+            .hour-label {
+                margin-left: calc(#{$court-cell-dimension}/4);
+                font-size: 13px;
+            }
+        }
+
+        .timetable-courts {
+            display: inline-block;
+
+            .court-cell {
+                width: $court-cell-dimension;
+                height: $court-cell-dimension;
+                cursor: pointer;
+                box-sizing: border-box;
+                display: inline-block;
+                border-right: 1px solid $court-cell-border-color;
+                border-bottom: 1px solid $court-cell-border-color;
+
+                .half-cell {
+                    width: 50%;
+                    height: 100%;
+                    float: left;
+                }
+
+                &.old-hour {
+                    background-color: rgba(0, 0, 0, 0.2);
+                    cursor: default;
+                }
+
+                &.old-hour + .court-cell:not(.old-hour) {
+                    box-shadow: 0 0 23px 2px color($accent, '700');
+                    background-color: color($accent, '300');
+                }
+
+
+                &.full-reserved .half-cell {
+                    @extend .reserved-cell;
+                }
+
+                &.half-start-reserved .half-cell:nth-child(2) {
+                    @extend .reserved-cell;
+                }
+
+                &.half-end-reserved .half-cell:nth-child(1) {
+                    @extend .reserved-cell;
+                }
+
+                &.first-row {
+                    border-top: 1px solid $court-cell-border-color;
+                }
+
+                &.first-column {
+                    border-left: 1px solid $court-cell-border-color;
+                }
+            }
+        }
+
+        .dayname {}
+
+        .court-number {
+            font-weight: bold;
+            line-height: $court-cell-dimension;
+            margin-right: 5px;
+        }
+    }
+}
+
+.reserved-cell {
+    color: white;
+    background: repeating-linear-gradient( -55deg, #666 1px, #777 2px, #777 11px, #666 12px, #666 20px );
+}

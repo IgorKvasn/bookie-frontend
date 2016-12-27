@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TennisManager</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> {{content-for "head"}}
+
+    <link rel="stylesheet" href="{{rootURL}}assets/vendor.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/tennis-manager.css"> {{content-for "head-footer"}}
+</head>
+
+<body>
+    {{content-for "body"}}
+
+    <div id="loadingLogo">
+  <div class="leftEye"></div>
+  <div class="rightEye"></div>
+  <div class="mouth"></div>
+    </div>
+
+    <script src="{{rootURL}}assets/vendor.js"></script>
+    <script src="{{rootURL}}assets/tennis-manager.js"></script>
+
+    {{content-for "body-footer"}}
+</body>
+
+</html>

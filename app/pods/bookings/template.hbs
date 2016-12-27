@@ -1,0 +1,64 @@
+<div class="week-control-panel">
+    <div class="">
+        {{#paper-button raised=true mini=true onClick=(action 'showPreviousWeek')}} {{paper-icon 'skip-previous'}}{{/paper-button}}
+        <span class="week-title">
+  {{moment-format firstDayOfWeek 'DD.MM.YYYY'}}
+  -
+  {{moment-format lastDayOfWeek 'DD.MM.YYYY'}}
+  </span>
+        {{#paper-button raised=true mini=true onClick=(action 'showNextWeek')}} {{paper-icon 'skip-next'}}{{/paper-button}}
+    </div>
+    <div class="jump-to-today">
+        {{#if (not (equal-dates todayStartOfWeek firstDayOfWeek))}}
+            {{#paper-button onClick=(action 'jumpToToday') noink=true primary=true}}Späť na dnešok{{/paper-button}}
+        {{/if}}
+    </div>
+</div>
+
+{{#liquid-bind firstDayOfWeek use="timetableSwitch" as |currentModel|}}
+    <div class="timetable">
+        {{#each courts as |court courtIndex|}}
+        <div class="{{if (equal-dates court.day currentDay) 'current-day-timetable' ''}}">
+            {{#paper-card as |card|}}
+                <div>
+                    <div class="timetable-day">
+                        <h2 class="dayname">{{capitalize-text (moment-format court.day 'dddd')}}</h2>
+                        <h4>{{moment-format court.day 'DD.MM.YYYY'}}</h4>
+                    </div>
+                    <div class="timetable-courts flex-row">
+                        <div class="layout-column flex">
+                            {{court-timetable-hours startOfDay=startOfDay hoursPerDay=hoursPerDay}}
+                            {{#each courtNamesArray as |courtName courtNameIndex|}}
+                                {{court-timetable courtName=courtName courtRow=courtNameIndex reservationsInDay=court.reservations hoursPerDay=hoursPerDay startOfDay=startOfDay day=(toUnixTime court.day) isLastCourtTimetable=( and (eq (increment-property courtNameIndex) courtNamesArray.length)
+                                (eq (increment-property courtIndex) courts.length) ) onLastCourtTimetable=(action 'onLastCourtTimetable') }}
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+            {{/paper-card}}
+          </div>
+        {{/each}}
+    </div>
+{{/liquid-bind}}
+
+
+<div class="court-info-popup">
+    <div>
+        <label>Hodina</label>
+        <span class="hour"></span>
+    </div>
+    <div>
+        <label>Kurt</label>
+        <span class="court"></span>
+    </div>
+    <div>
+        <label>Stav</label>
+        <span class="state"></span>
+    </div>
+    <div class="hint note"></div>
+</div>
+
+{{#if bookingDialogVisible}}
+    {{#new-booking newReservation=bookingDialogData onBookingClose=(action 'closeBookingDialog') onBookingCreated=(action 'onBookingCreated') }}
+    {{/new-booking}}
+{{/if}}

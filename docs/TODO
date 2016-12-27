@@ -1,0 +1,7 @@
+- kazdy request musi obsahovat ID organizacie (napr. proset)
+- Cookie zakon
+- Podporovane browseri -> nieco ako:
+      - http://jreject.turnwheel.com/
+      - https://browser-update.org/
+- pridad Google analytics (Ember + Google Analytics)
+- pridat FastClick - uz je pouzity v app.js

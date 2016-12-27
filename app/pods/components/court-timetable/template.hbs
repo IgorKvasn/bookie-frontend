@@ -1,0 +1,12 @@
+<div class="flex court-number">
+    {{courtName}}
+</div>
+
+{{#each hourIterator as |hour index|}}
+    <div data-hour= {{hour}} class="court-cell {{if (old-hour hour=hour currentHour=currentHour currentDay=currentDay day=day) 'old-hour' ''}} {{court-reserved reservationsInDay=reservationsInDay hour=hour courtName=courtName}} {{if (eq index 0) 'first-column' ''}} {{if (eq courtRow 0) 'first-row' ''}}">
+        <div class="half-cell" data-half=1>
+        </div>
+        <div class="half-cell" data-hour= {{hour}} data-half=2>
+        </div>
+    </div>
+{{/each}}

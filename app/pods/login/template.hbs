@@ -1,0 +1,16 @@
+<div class="layout-column flex">
+    <div class="flex">
+        <label>Prihlasovacie meno (email)</label>
+        <div>{{paper-input value=username required=true onChange=(action (mut username))  errorMessages=(hash required="Zadajte prihlasovacie meno.")}} </div>
+    </div>
+    <div class="flex">
+        <label>Heslo</label>
+        <div>{{paper-input type="password" value=username required=true onChange=(action (mut username))  errorMessages=(hash required="Zadajte heslo.")}} </div>
+    </div>
+    <div>
+      {{#paper-button onClick=(action 'forgotPassword')}}Zabudli ste heslo?{{/paper-button}}
+    </div>
+    <div class="flex">
+        {{#paper-button raised=true primary=true onClick=(action 'login')}}Prihlásiť{{/paper-button}}
+    </div>
+</div>

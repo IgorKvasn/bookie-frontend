@@ -1,0 +1,60 @@
+{{#paper-dialog class="flex-50" onClose=(action 'cancelBookingDialog') origin='.timetable' parent='body' clickOutsideToClose=true}}
+    <form>
+        {{#paper-toolbar}}
+            {{#paper-toolbar-tools}}
+                <h2>Nová rezervácia</h2>
+                <span class="flex"></span>
+                {{#paper-button iconButton=true onClick=(action 'cancelBookingDialog')}}{{paper-icon icon="close"}}{{/paper-button}}
+            {{/paper-toolbar-tools}}
+        {{/paper-toolbar}}
+
+        {{#paper-dialog-content}}
+            <form class="new-booking layout-column">
+                <div class="flex">
+                    <label>Deň</label>
+                    <div class="value">{{capitalize-text (moment-format newReservation.startTime 'dddd')}} - {{moment-format newReservation.startTime 'DD.MM.YYYY'}}</div>
+                </div>
+                <div class="flex">
+                    <label>Začiatok</label>
+                    <div class="value">
+                        {{#paper-button raised=true mini=true onClick=(action 'changeTime' 'newReservation.startTime' -30)}}-{{/paper-button}}
+                        {{moment-format newReservation.startTime 'HH:mm'}}
+                        {{#paper-button raised=true mini=true onClick=(action 'changeTime' 'newReservation.startTime' 30)}}+{{/paper-button}}
+                    </div>
+                </div>
+                <div class="flex">
+                    <label>Trvanie</label>
+                    <div class="value">
+                        {{#paper-button raised=true mini=true onClick=(action 'changeDuration' -0.5) disabled=canNotDecrementDuration}}-{{/paper-button}}
+                        <span class="duration">{{bookingDuration}} hod</span>
+                        {{#paper-button raised=true mini=true onClick=(action 'changeDuration' 0.5)}}+{{/paper-button}}
+                    </div>
+                </div>
+                <div class="flex">
+                    <label>Telefónne číslo</label>
+                    <p class="hint notifications-hint">
+                        Na toto číslo vás budeme kontaktovať v prípade zmeny alebo zrušenia termínu.
+                    </p>
+                    <div class="value">
+                        {{paper-input class="phoneInput" required=true  errorMessages=(hash required="Zadajte telefónne číslo.")  value=newReservation.phone onChange=(action (mut newReservation.phone))}}
+                    </div>
+                </div>
+                <div class="flex">
+                    <label>Notifikácie</label>
+                    <p class="hint notifications-hint">
+                        Zadajte emailové adresy, na ktoré sa pošlú notifikácie o tejto rezervácii.<br/> Nechajte prázdne, ak nechcete používať notifikácie.
+                    </p>
+                    <div class="value">
+                        {{paper-input onChange=(action (mut newReservation.notifications)) value=newReservation.notifications customValidations=emailValidation}}
+                    </div>
+                </div>
+            </form>
+        {{/paper-dialog-content}}
+
+        {{#paper-dialog-actions class="layout-row" }}
+            <span class="flex"></span>
+            {{#paper-button onClick=(action 'cancelBookingDialog')}}Zrušiť{{/paper-button}}
+            {{#paper-button onClick=(action 'confirmBookingDialog')}}Rezervovať{{/paper-button}}
+        {{/paper-dialog-actions}}
+    </form>
+{{/paper-dialog}}
