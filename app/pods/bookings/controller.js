@@ -19,7 +19,7 @@ export default Ember.Controller.extend({
     currentStartOfWeek: null,
     currentDay: null,
     updatedDate: null,
-    timetableInitializedFirstTime: false,
+    timetableInitializedFirstTime: Date.now(),
 
     init() {
         this._super(...arguments);
@@ -49,6 +49,7 @@ export default Ember.Controller.extend({
         }
 
         let newReservation = this.store.createRecord('reservation', {
+            id: `${Date.now()}`,
             startTime: bookingStart.toDate(),
             courtName
         });
@@ -64,10 +65,37 @@ export default Ember.Controller.extend({
             start: this.get('firstDayOfWeek').getTime(),
             end: this.get('lastDayOfWeek').getTime()
         }).then((result) => {
-            this.set('courts', result);
+            //add days that are not within the response (and thus do not have any reservations)
+            let tempDate = moment(this.get('firstDayOfWeek')).startOf('day');
+            let lastDayOfWeekUnix = moment(this.get('lastDayOfWeek')).startOf('day').unix();
+            let newCourts = [];
+            while (tempDate.unix() <= lastDayOfWeekUnix) {
+                if (!findDayInCourts(tempDate, result)) {
+                    newCourts.push(this.store.createRecord('court', {
+                        day: tempDate.toDate()
+                    }));
+                }
+                tempDate = tempDate.add(1, 'day');
+            }
+
+            result = result.toArray().concat(newCourts);
+             result = _.sortBy(result, (c) => {
+                 return c.get('day').getTime();
+             });
+
+            this.set('courts', Ember.A(result));
             this.set('updatedDate', Date.now());
         });
         //TODO error handling
+
+        function findDayInCourts(day, courts) {
+            return courts.find((c) => {
+                if (Ember.isNone(c.get('day'))) {
+                    return false;
+                }
+                return moment(c.get('day')).startOf('day').unix() === day.unix();
+            });
+        }
     },
 
     lastDayOfWeek: Ember.computed('firstDayOfWeek', function() {
