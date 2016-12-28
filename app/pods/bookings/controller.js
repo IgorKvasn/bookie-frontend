@@ -3,6 +3,8 @@ import moment from 'moment';
 
 export default Ember.Controller.extend({
 
+    liquidFireEvents: Ember.inject.service(),
+
     courts: null,
     firstDayOfWeek: null,
 
@@ -16,6 +18,8 @@ export default Ember.Controller.extend({
     }),
     currentStartOfWeek: null,
     currentDay: null,
+    updatedDate: null,
+    timetableInitializedFirstTime: false,
 
     init() {
         this._super(...arguments);
@@ -28,6 +32,13 @@ export default Ember.Controller.extend({
         let currentStartOfWeek = moment().startOf('week').toDate();
         this.set('firstDayOfWeek', currentStartOfWeek);
         this.set('todayStartOfWeek', currentStartOfWeek);
+
+        this.get('liquidFireEvents')
+            .on('transitionBegan', () => {
+                this.destroyCellListeners();
+            }).on('transitionAnimated', () => {
+                this.registerCellListeners();
+            });
     }),
 
     showCellPopup: function(day, hour, half, courtName) {
@@ -54,6 +65,7 @@ export default Ember.Controller.extend({
             end: this.get('lastDayOfWeek').getTime()
         }).then((result) => {
             this.set('courts', result);
+            this.set('updatedDate', Date.now());
         });
         //TODO error handling
     },
@@ -82,7 +94,82 @@ export default Ember.Controller.extend({
         return 1;
     },
 
+    destroyCellListeners() {
+        Ember.$('body .half-cell').off('click.new-booking');
+        Ember.$('body .court-timetable .court-cell').off('mouseenter.booking-info');
+        Ember.$('body .court-timetable .court-cell').off('mouseleave.booking-info');
+    },
+
+    registerCellListeners() {
+        let self = this;
+        Ember.$('body .court-cell:not(.full-reserved, .old-hour) .half-cell').on('click.new-booking', function() {
+            let $this = Ember.$(this);
+            let $courtTimetable = $this.parents('.court-timetable');
+            let availableHalf = self.findAvailableHalfCell($this);
+            if (Ember.isNone(availableHalf)) {
+                //uz sa neda kam kliknut
+                return;
+            }
+            self.showCellPopup($courtTimetable.data('day'), $this.parents('.court-cell').data('hour'), availableHalf, $courtTimetable.data('courtName'));
+        });
+
+        Ember.$('body .court-timetable .court-cell').on('mouseenter.booking-info', function() {
+            let $courtInfo = Ember.$('.court-info-popup');
+            let {
+                top,
+                left
+            } = Ember.$(this).offset();
+
+            let cellTop = parseInt(top, 10);
+            let cellLeft = parseInt(left, 10);
+            let $this = Ember.$(this);
+
+            $courtInfo.css({
+                top: `${cellTop + $this.height() + 5}px`,
+                left: `${cellLeft - ($courtInfo.width() - $this.width())/2}px`
+            });
+
+            let parentData = $this.parent('.court-timetable').data();
+            let hourStart = $this.data().hour;
+            let hourEnd = hourStart + 1;
+            if (hourStart < 9) {
+                hourStart = '0' + hourStart;
+            }
+            if (hourEnd < 9) {
+                hourEnd = '0' + hourEnd;
+            }
+            $courtInfo.find('.hour').text(`${hourStart}:00 - ${hourEnd}:00`);
+            $courtInfo.find('.court').text(parentData.courtName);
+
+            let classes = $this.attr('class').split(' ');
+            if (classes.includes('full-reserved')) {
+                $courtInfo.find('.state').text('Obsadené');
+                $courtInfo.find('.note').text('');
+            } else {
+                $courtInfo.find('.state').text('Voľné');
+                if (classes.includes('old-hour')) {
+                    $courtInfo.find('.note').text('');
+                } else {
+                    $courtInfo.find('.note').text('Kliknite na rezervovanie');
+                }
+            }
+
+            $courtInfo.addClass('visible');
+        });
+        Ember.$('body .court-timetable .court-cell').on('mouseleave.booking-info', function() {
+            let $courtInfo = Ember.$('.court-info-popup');
+            $courtInfo.removeClass('visible');
+        });
+
+    },
+
+
     actions: {
+
+        updateTimetable() {
+            this.timetableObserverFn();
+        },
+
         closeBookingDialog() {
             this.set('bookingDialogVisible', false);
         },
@@ -96,68 +183,8 @@ export default Ember.Controller.extend({
                 court.get('reservations').pushObject(newBooking);
             }
         },
-
         onLastCourtTimetable() {
-            let self = this;
-            Ember.$('body .court-cell:not(.full-reserved, .old-hour) .half-cell').on('click.new-booking', function() {
-                let $this = Ember.$(this);
-                let $courtTimetable = $this.parents('.court-timetable');
-                let availableHalf = self.findAvailableHalfCell($this);
-                if (Ember.isNone(availableHalf)) {
-                    //uz sa neda kam kliknut
-                    return;
-                }
-                self.showCellPopup($courtTimetable.data('day'), $this.parents('.court-cell').data('hour'), availableHalf, $courtTimetable.data('courtName'));
-            });
-
-            Ember.$('body .court-timetable .court-cell').on('mouseenter.booking-info', function() {
-                let $courtInfo = Ember.$('.court-info-popup');
-                let {
-                    top,
-                    left
-                } = Ember.$(this).offset();
-
-                let cellTop = parseInt(top, 10);
-                let cellLeft = parseInt(left, 10);
-                let $this = Ember.$(this);
-
-                $courtInfo.css({
-                    top: `${cellTop + $this.height() + 5}px`,
-                    left: `${cellLeft - ($courtInfo.width() - $this.width())/2}px`
-                });
-
-                let parentData = $this.parent('.court-timetable').data();
-                let hourStart = $this.data().hour;
-                let hourEnd = hourStart + 1;
-                if (hourStart < 9) {
-                    hourStart = '0' + hourStart;
-                }
-                if (hourEnd < 9) {
-                    hourEnd = '0' + hourEnd;
-                }
-                $courtInfo.find('.hour').text(`${hourStart}:00 - ${hourEnd}:00`);
-                $courtInfo.find('.court').text(parentData.courtName);
-
-                let classes = $this.attr('class').split(' ');
-                if (classes.includes('full-reserved')) {
-                    $courtInfo.find('.state').text('Obsadené');
-                    $courtInfo.find('.note').text('');
-                } else {
-                    $courtInfo.find('.state').text('Voľné');
-                    if (classes.includes('old-hour')) {
-                        $courtInfo.find('.note').text('');
-                    } else {
-                        $courtInfo.find('.note').text('Kliknite na rezervovanie');
-                    }
-                }
-
-                $courtInfo.addClass('visible');
-            });
-            Ember.$('body .court-timetable .court-cell').on('mouseleave.booking-info', function() {
-                let $courtInfo = Ember.$('.court-info-popup');
-                $courtInfo.removeClass('visible');
-            });
-
+            this.registerCellListeners();
         },
 
         showNextWeek() {

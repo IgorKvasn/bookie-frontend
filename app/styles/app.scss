@@ -1,7 +1,8 @@
 @import 'ember-paper';
 @import "ember-paper-config";
 @import "loading-indicator";
-$court-cell-dimension: 40px;
+$court-cell-width: 45px;
+$court-cell-height: 40px;
 $court-cell-border-color: #404040;
 
 body {
@@ -73,16 +74,28 @@ md-sidenav md-toolbar .md-toolbar-tools {
         width: 100%;
         text-align: center;
         position: relative;
+        height: 70px;
 
         .week-title {
             vertical-align: middle;
+        }
+
+        .updated-date {
+            display: inline-block;
+            right: 0;
+            position: absolute;
+            bottom: 0;
+
+            & * {
+                vertical-align: middle;
+            }
         }
 
         .jump-to-today {
             display: inline-block;
             right: 0;
             position: absolute;
-            bottom: 0;
+            top: 0;
 
             a {
                 text-decoration: underline;
@@ -126,18 +139,18 @@ md-sidenav md-toolbar .md-toolbar-tools {
             display: inline-block;
         }
 
-        .current-day-timetable md-card{
-          box-shadow: 0 0 23px 2px color($accent, '700');
+        .current-day-timetable md-card {
+            box-shadow: 0 0 23px 2px color($accent, '700');
         }
 
         .court-timetable-hours {
             .court-cell.hour-cell {
                 border: none;
-                height: calc(#{$court-cell-dimension}/2);
+                height: calc(#{$court-cell-height}/2);
             }
 
             .hour-label {
-                margin-left: calc(#{$court-cell-dimension}/4);
+                margin-left: calc(#{$court-cell-width}/4);
                 font-size: 13px;
             }
         }
@@ -146,8 +159,8 @@ md-sidenav md-toolbar .md-toolbar-tools {
             display: inline-block;
 
             .court-cell {
-                width: $court-cell-dimension;
-                height: $court-cell-dimension;
+                width: $court-cell-width;
+                height: $court-cell-height;
                 cursor: pointer;
                 box-sizing: border-box;
                 display: inline-block;
@@ -169,7 +182,6 @@ md-sidenav md-toolbar .md-toolbar-tools {
                     box-shadow: 0 0 23px 2px color($accent, '700');
                     background-color: color($accent, '300');
                 }
-
 
                 &.full-reserved .half-cell {
                     @extend .reserved-cell;
@@ -197,7 +209,7 @@ md-sidenav md-toolbar .md-toolbar-tools {
 
         .court-number {
             font-weight: bold;
-            line-height: $court-cell-dimension;
+            line-height: $court-cell-height;
             margin-right: 5px;
         }
     }

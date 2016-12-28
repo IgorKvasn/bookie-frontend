@@ -9,12 +9,13 @@ export default function( /* arg1, arg2 */ ) {
     // Stop any currently running animation on oldElement
     stop(this.oldElement);
 
-    let animation;
+    let delegateTo = null;
+
     if (this.oldValue.getTime() < this.newValue.getTime()) {
-        animation = this.lookup('toLeft');
+        delegateTo = 'toLeft';
     } else {
-        animation = this.lookup('toRight');
+        delegateTo = 'toRight';
     }
 
-    return animation.apply(this);
+    return this.lookup('with-event').apply(this, [delegateTo]);
 }

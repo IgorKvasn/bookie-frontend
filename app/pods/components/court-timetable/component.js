@@ -16,6 +16,7 @@ export default Ember.Component.extend({
     onLastCourtTimetable: Ember.K,
     currentHour: null,
     currentDay: null,
+    initialized: false,
 
     init(){
       this._super(...arguments);
@@ -27,8 +28,8 @@ export default Ember.Component.extend({
 
 
     initComponent: Ember.on('didInsertElement', function() {
-
-        if (this.get('isLastCourtTimetable')) {
+        if (this.get('isLastCourtTimetable') && !this.get('initialized')) {
+          this.set('initialized', true);
             Ember.run.schedule("afterRender", this, function() {
                 this.get('onLastCourtTimetable')();
             });
