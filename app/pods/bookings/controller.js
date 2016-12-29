@@ -40,7 +40,7 @@ export default Ember.Controller.extend({
 
         Ember.run.schedule("afterRender", this, function() {
 
-            let calendar = new window.Flatpickr(Ember.$("#datepicker")[0], {
+          new window.Flatpickr(Ember.$("#datepicker")[0], {
                 inline: true,
                 onChange(newDate) {
                     self.set('selectedDay', newDate[0]);
