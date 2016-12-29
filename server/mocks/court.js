@@ -6,42 +6,30 @@ module.exports = function(app) {
     var courtsRouter = express.Router();
 
     courtsRouter.get('/', function(req, res) {
-        var start = req.query.start;
-        var end = req.query.end;
 
 
-        var day = moment(new Date(parseInt(start, 10)));
+        var day = moment(new Date(parseInt(req.query.day, 10)));
 
         res.send({
-            'court': [{
-                id: '1',
-
-                reservations: [{
-                    id: '1',
-                    startTime: day.minutes(0).hours(9).unix() * 1000, //9:00
-                    endTime: day.minutes(0).hours(10).unix() * 1000, //10:00
-                    reservedFor: 'Ferko Mrkvička',
-                    courtName: 'K1'
-                }]
-            }, {
-                id: '2',
+            'court': [ {
+                id: Date.now() + '',
 
                 reservations: [{
                     id: '2',
-                    startTime: day.startOf('day').add(1, 'day').minutes(30).hours(9).unix() * 1000, //utorok, 12/20/2016, 9:30:00 AM
-                    endTime: day.startOf('day').add(1, 'day').minutes(30).hours(12).unix() * 1000, //12:30
+                    startTime: day.startOf('day').minutes(30).hours(9).unix() * 1000, //utorok, 12/20/2016, 9:30:00 AM
+                    endTime: day.startOf('day').minutes(30).hours(12).unix() * 1000, //12:30
                     reservedFor: 'Jožko Jahoda',
                     courtName: 'K2'
                 }, {
                     id: '3',
-                    startTime: day.startOf('day').add(1, 'day').minutes(0).hours(13).unix() * 1000, //utorok, 12/20/2016, 13:00:00 PM
-                    endTime: day.startOf('day').add(1, 'day').minutes(30).hours(14).unix() * 1000, //14:30
+                    startTime: day.startOf('day').minutes(0).hours(13).unix() * 1000, //utorok, 12/20/2016, 13:00:00 PM
+                    endTime: day.startOf('day').minutes(30).hours(14).unix() * 1000, //14:30
                     reservedFor: 'Jožko Jahoda',
                     courtName: 'K4'
                 }, {
                     id: '4',
-                    startTime: day.startOf('day').add(1, 'day').minutes(30).hours(14).unix() * 1000, //utorok, 12/20/2016, 14:30:00 PM
-                    endTime: day.startOf('day').add(1, 'day').minutes(30).hours(15).unix() * 1000, //15:30
+                    startTime: day.startOf('day').minutes(30).hours(14).unix() * 1000, //utorok, 12/20/2016, 14:30:00 PM
+                    endTime: day.startOf('day').minutes(30).hours(15).unix() * 1000, //15:30
                     reservedFor: 'Jožko2 Jahoda2',
                     courtName: 'K4'
                 }]

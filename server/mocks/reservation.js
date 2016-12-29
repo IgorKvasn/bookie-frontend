@@ -1,11 +1,33 @@
 /*jshint node:true*/
+var moment = require('moment');
+
 module.exports = function(app) {
     var express = require('express');
     var reservationRouter = express.Router();
 
     reservationRouter.get('/', function(req, res) {
+        var day = moment(new Date(parseInt(req.query.day, 10)));
+
         res.send({
-            'reservation': []
+            'reservation': [{
+                id: '2',
+                startTime: day.startOf('day').minutes(30).hours(9).unix() * 1000, //utorok, 12/20/2016, 9:30:00 AM
+                endTime: day.startOf('day').minutes(30).hours(12).unix() * 1000, //12:30
+                reservedFor: 'Jožko Jahoda',
+                courtName: 'K2'
+            }, {
+                id: '3',
+                startTime: day.startOf('day').minutes(0).hours(13).unix() * 1000, //utorok, 12/20/2016, 13:00:00 PM
+                endTime: day.startOf('day').minutes(30).hours(14).unix() * 1000, //14:30
+                reservedFor: 'Jožko Jahoda',
+                courtName: 'K4'
+            }, {
+                id: '4',
+                startTime: day.startOf('day').minutes(30).hours(14).unix() * 1000, //utorok, 12/20/2016, 14:30:00 PM
+                endTime: day.startOf('day').minutes(30).hours(15).unix() * 1000, //15:30
+                reservedFor: 'Jožko2 Jahoda2',
+                courtName: 'K4'
+            }]
         });
     });
 

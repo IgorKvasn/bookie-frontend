@@ -5,8 +5,7 @@ export default Ember.Controller.extend({
 
     liquidFireEvents: Ember.inject.service(),
 
-    courts: null,
-    firstDayOfWeek: null,
+    reservations: null,
 
     bookingDialogVisible: false,
     bookingDialogData: null,
@@ -28,10 +27,7 @@ export default Ember.Controller.extend({
     },
 
     initController: Ember.on('init', function() {
-        //calculate start of this week
-        let currentStartOfWeek = moment().startOf('week').toDate();
-        this.set('firstDayOfWeek', currentStartOfWeek);
-        this.set('todayStartOfWeek', currentStartOfWeek);
+        this.set('selectedDay', moment().startOf('day').toDate());
 
         this.get('liquidFireEvents')
             .on('transitionBegan', () => {
@@ -39,6 +35,21 @@ export default Ember.Controller.extend({
             }).on('transitionAnimated', () => {
                 this.registerCellListeners();
             });
+
+        let self = this;
+
+        Ember.run.schedule("afterRender", this, function() {
+
+            let calendar = new window.Flatpickr(Ember.$("#datepicker")[0], {
+                inline: true,
+                onChange(newDate) {
+                    self.set('selectedDay', newDate[0]);
+                }
+                // onDayCreate(a, b, c, d) {
+                // console.log('day', a, b, c, d);
+                // }
+            });
+        });
     }),
 
     showCellPopup: function(day, hour, half, courtName) {
@@ -56,54 +67,20 @@ export default Ember.Controller.extend({
         this.set('bookingDialogData', newReservation);
     },
 
-    timetableObserver: Ember.observer('firstDayOfWeek', 'lastDayOfWeek', function() {
+    timetableObserver: Ember.observer('selectedDay', function() {
         Ember.run.once(this, 'timetableObserverFn');
     }),
 
     timetableObserverFn() {
-        this.store.query('court', {
-            start: this.get('firstDayOfWeek').getTime(),
-            end: this.get('lastDayOfWeek').getTime()
+        this.store.query('reservation', {
+            day: this.get('selectedDay').getTime(),
         }).then((result) => {
-            //add days that are not within the response (and thus do not have any reservations)
-            let tempDate = moment(this.get('firstDayOfWeek')).startOf('day');
-            let lastDayOfWeekUnix = moment(this.get('lastDayOfWeek')).startOf('day').unix();
-            let newCourts = [];
-            while (tempDate.unix() <= lastDayOfWeekUnix) {
-                if (!findDayInCourts(tempDate, result)) {
-                    newCourts.push(this.store.createRecord('court', {
-                        day: tempDate.toDate()
-                    }));
-                }
-                tempDate = tempDate.add(1, 'day');
-            }
-
-            result = result.toArray().concat(newCourts);
-             result = _.sortBy(result, (c) => {
-                 return c.get('day').getTime();
-             });
-
-            this.set('courts', Ember.A(result));
+            this.set('reservations', result);
             this.set('updatedDate', Date.now());
         });
         //TODO error handling
 
-        function findDayInCourts(day, courts) {
-            return courts.find((c) => {
-                if (Ember.isNone(c.get('day'))) {
-                    return false;
-                }
-                return moment(c.get('day')).startOf('day').unix() === day.unix();
-            });
-        }
     },
-
-    lastDayOfWeek: Ember.computed('firstDayOfWeek', function() {
-        if (Ember.isNone(this.get('firstDayOfWeek'))) {
-            return null;
-        }
-        return moment(this.get('firstDayOfWeek')).endOf('week').toDate();
-    }),
 
     findAvailableHalfCell($courtCell) {
         let $parent = $courtCell.parents('.court-cell');
@@ -215,17 +192,17 @@ export default Ember.Controller.extend({
             this.registerCellListeners();
         },
 
-        showNextWeek() {
-            let firstDayOfWeek = this.get('firstDayOfWeek');
-            this.set('firstDayOfWeek', moment(firstDayOfWeek).add(7, 'days').toDate());
-        },
-        showPreviousWeek() {
-            let firstDayOfWeek = this.get('firstDayOfWeek');
-            this.set('firstDayOfWeek', moment(firstDayOfWeek).subtract(7, 'days').toDate());
-        },
-        jumpToToday() {
-            this.set('firstDayOfWeek', this.get('todayStartOfWeek'));
-        }
 
+        jumpToToday() {
+            this.set('selectedDay', moment(this.get('currentDay')).subtract(1, 'day').toDate());
+        },
+
+        showPreviousDay() {
+            this.set('selectedDay', moment(this.get('selectedDay')).subtract(1, 'day').toDate());
+        },
+
+        showNextDay() {
+            this.set('selectedDay', moment(this.get('selectedDay')).add(1, 'day').toDate());
+        }
     }
 });

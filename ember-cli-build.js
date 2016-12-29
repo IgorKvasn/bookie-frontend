@@ -21,6 +21,8 @@ module.exports = function(defaults) {
   // along with the exports of each module as its value.
 
 	app.import('bower_components/lodash/dist/lodash.min.js');
+  app.import('vendor/flatpickr-2.2.4/flatpickr.js');
+  app.import('vendor/flatpickr-2.2.4/flatpickr.css');
 
   return app.toTree();
 };

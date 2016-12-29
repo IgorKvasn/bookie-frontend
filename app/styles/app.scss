@@ -125,6 +125,11 @@ md-sidenav md-toolbar .md-toolbar-tools {
         }
     }
 
+    .flatpickr-calendar.arrowTop:after,
+    .flatpickr-calendar.arrowTop:before {
+        border-bottom-color: transparent;
+    }
+
     .timetable {
         & > md-card {
             margin-bottom: 15px;
@@ -137,10 +142,6 @@ md-sidenav md-toolbar .md-toolbar-tools {
             text-align: center;
             width: 200px;
             display: inline-block;
-        }
-
-        .current-day-timetable md-card {
-            box-shadow: 0 0 23px 2px color($accent, '700');
         }
 
         .court-timetable-hours {
