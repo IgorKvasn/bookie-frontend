@@ -81,8 +81,8 @@ export default Ember.Controller.extend({
                 duration: this.get('bookingDuration'),
                 timeStart: this.get('timeFrom'),
                 timeEnd: this.get('timeUntil'),
-                days: this.get('selectedDays'),
-                notifications: this.get('subscribeNotificationsEmail')
+                days: this.get('selectedDays')
+
             };
             this.get('simpleAjax').doNonAuthorizedGet('/api/search-booking', options).then((result) => {
                 this.set('searchResult', Ember.A(result));
@@ -99,7 +99,7 @@ export default Ember.Controller.extend({
         },
 
         subscribeNotifications() {
-            window.alert('TODO'); //TODO subscribeNotifications
+            window.alert('TODO'); //TODO subscribeNotifications - available in this.get('subscribeNotificationsEmail')
         }
     }
 });
