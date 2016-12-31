@@ -1,0 +1,84 @@
+<div class="booking-search">
+    <h2>Vyhľadávanie voľných termínov</h2>
+
+    <div class="layout-row flex">
+        <div class="flex">
+            <label>Vyberte dni</label>
+            <input id="datepicker" style="display: none;" />
+        </div>
+
+        <div class="flex layout-column layout-align-space-around-stretch">
+            <div class="flex">
+                <label>Trvanie</label>
+                <div class="value">
+                    {{#paper-button raised=true mini=true onClick=(action 'changeDuration' -0.5) disabled=canNotDecrementDuration}}-{{/paper-button}}
+                    <span class="duration">{{bookingDuration}} hod</span>
+                    {{#paper-button raised=true mini=true onClick=(action 'changeDuration' 0.5)}}+{{/paper-button}}
+                </div>
+            </div>
+
+            <div class="flex" style="margin-top: 30px;">
+                <label>Čas od</label> {{time-picker value=timeFrom onChange=(action (mut timeFrom)) required=true errorMessages=(hash required="Vyplňte čas.")}}
+                <label>Čas do</label> {{time-picker value=timeUntil onChange=(action (mut timeUntil)) required=true errorMessages=(hash required="Vyplňte čas.") customValidations=timeUntilValidation}}
+            </div>
+        </div>
+    </div>
+    <div class="action-panel">
+        {{#paper-button raised=true primary=true onClick=(action 'searchBooking')}}Hľadaj{{/paper-button}}
+        {{#each generalValidations as |err|}}
+        <div class="validation-error">{{err}}</div>
+        {{/each}}
+    </div>
+    {{#if searchPerformed}}
+        {{#if searchResultFound}}
+            {{#paper-card as |card|}}
+                {{#card.title as |title|}}
+                    {{#title.text as |text|}}
+                        {{#text.headline}}Nájdené termíny{{/text.headline}}
+                    {{/title.text}}
+                {{/card.title}}
+                {{#card.content class="layout-row layout-align-space-between search-result-panel" }}
+                    <div class="layout-column">
+                        {{#each searchResult as |availableBooking|}}
+                            <div class="layout-row result-row">
+                                <div class="flex available-date">
+                                    {{moment-format availableBooking.date 'dddd DD.MM.YYYY HH:mm'}}
+                                </div>
+                                <div class="flex">
+                                    {{#paper-button raised=true onClick=(action 'showAvailableBooking' availableBooking.date)}}Zobraziť a rezervovať{{/paper-button}}
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                {{/card.content}}
+            {{/paper-card}}
+
+
+        {{else}}
+            <h3 class="no-available-bookings">Žiadne voľné termíny pre toto hľadanie.</h3>
+            {{#paper-card as |card|}}
+                {{#card.title as |title|}}
+                    {{#title.text as |text|}}
+                        {{#text.headline}}Upozornenie o dostupnosti{{/text.headline}}
+                    {{/title.text}}
+                {{/card.title}}
+                {{#card.content class="layout-column" }}
+                    <div class="flex">
+                        V prípade, že sa vo vybraných dňoch a zvolených časoch uvoľní termín, pošleme vám o tom email
+                    </div>
+                    <div class="flex" style="margin-top: 10px;">
+                        <label>Zadajte emailovú adresu</label>
+                        <div class="value">
+                            {{paper-input onChange=(action (mut subscribeNotificationsEmail)) required=true errorMessages=(hash required="Emailová adresa je povinná (ak chcete dostávať notifikácie)." ) value=subscribeNotificationsEmail customValidations=emailValidation}}
+                        </div>
+                    </div>
+                    {{#card.actions }}
+                        {{#paper-button raised=true onClick=(action 'subscribeNotifications')}}Poslať upozornenie{{/paper-button}}
+                    {{/card.actions}}
+                {{/card.content}}
+            {{/paper-card}}
+
+        {{/if}}
+
+    {{/if}}
+</div>

@@ -1,0 +1,70 @@
+<div class="layout-row booking-row">
+
+    <div class="timetable-container">
+        <div class="week-control-panel">
+            <div class="date-navigation">
+                {{#paper-button raised=true mini=true onClick=(action 'showPreviousDay')}} {{paper-icon 'skip-previous'}}{{/paper-button}}
+                <span class="week-title">
+      {{capitalize-text (moment-format selectedDay 'dddd')}} {{moment-format selectedDay 'DD.MM.YYYY'}}
+      </span>
+                {{#paper-button raised=true mini=true onClick=(action 'showNextDay')}} {{paper-icon 'skip-next'}}{{/paper-button}}
+            </div>
+            <div class="updated-date">
+                {{#paper-button onClick=(action 'updateTimetable') noink=true primary=false}}
+                    {{paper-icon "refresh"}}
+                    <span>Aktualizované {{moment-from updatedDate interval=1000}}</span>
+                {{/paper-button}}
+            </div>
+        </div>
+
+        {{#liquid-bind selectedDay use="timetableSwitch" as |currentModel|}}
+            <div class="timetable">
+
+                {{#paper-card as |card|}}
+
+                    {{#if reservations}}
+                        <div class="timetable-courts flex-row">
+                            <div class="layout-column flex">
+                                {{court-timetable-hours startOfDay=startOfDay hoursPerDay=hoursPerDay}}
+                                {{#each courtNamesArray as |courtName courtNameIndex|}}
+                                    {{court-timetable courtName=courtName courtRow=courtNameIndex initialized=timetableInitializedFirstTime reservationsInDay=reservations hoursPerDay=hoursPerDay startOfDay=startOfDay day=(toUnixTime selectedDay) isLastCourtTimetable=(eq (increment-property
+                                    courtNameIndex) courtNamesArray.length) onLastCourtTimetable=(action 'onLastCourtTimetable') }}
+                                {{/each}}
+                            </div>
+                        </div>
+                    {{/if}}
+
+                {{/paper-card}}
+
+            </div>
+        {{/liquid-bind}}
+    </div>
+    <div class="calendar-container">
+        {{#paper-card as |datepicker|}}
+            <input id="datepicker" style="display:none;" />
+        {{/paper-card}}
+    </div>
+</div>
+
+
+
+<div class="court-info-popup">
+    <div>
+        <label>Hodina</label>
+        <span class="hour"></span>
+    </div>
+    <div>
+        <label>Kurt</label>
+        <span class="court"></span>
+    </div>
+    <div>
+        <label>Stav</label>
+        <span class="state"></span>
+    </div>
+    <div class="hint note"></div>
+</div>
+
+{{#if bookingDialogVisible}}
+    {{#new-booking newReservation=bookingDialogData onBookingClose=(action 'closeBookingDialog') onBookingCreated=(action 'onBookingCreated') }}
+    {{/new-booking}}
+{{/if}}

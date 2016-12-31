@@ -24,8 +24,8 @@ export default Ember.Component.extend({
 
     emailValidation: [{
         message: 'Jedna alebo viacero emailových adries nemá správny formát.',
-        validate: (value) => {
-            return validateNotificationFormat(value);
+        validate: (inputValue) => {
+            return validateNotificationFormat(inputValue);
         }
     }],
 

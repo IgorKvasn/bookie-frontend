@@ -29,6 +29,18 @@ initPolyfills();
 loadInitializers(App, config.modulePrefix);
 
 
+window.Flatpickr.l10ns.sk = {
+    firstDayOfWeek: 1,
+    weekdays: {
+        shorthand: ['Ne', 'Po', 'Ut', 'St', 'Št', 'Pi', 'So'],
+        longhand: ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota']
+    },
+    months: {
+        shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Máj', 'Jún', 'Júl', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'],
+        longhand: ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December']
+    }
+};
+
 function initPolyfills() {
     if (!Array.prototype.includes) {
         Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
