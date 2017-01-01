@@ -4,6 +4,7 @@ import moment from 'moment';
 export default Ember.Controller.extend({
 
     liquidFireEvents: Ember.inject.service(),
+    flashMessages: Ember.inject.service(),
 
     reservations: null,
 
@@ -20,6 +21,7 @@ export default Ember.Controller.extend({
     updatedDate: null,
     timetableInitializedFirstTime: false,
     calendarWidget: null,
+    loadingTimetable: false,
 
     init() {
         this._super(...arguments);
@@ -28,7 +30,8 @@ export default Ember.Controller.extend({
     },
 
     initController: Ember.on('init', function() {
-        this.set('selectedDay', moment().startOf('day').toDate());
+        let newDay = moment().startOf('day').toDate();
+        this.fetchTimetable(newDay);
 
         this.get('liquidFireEvents')
             .on('transitionBegan', () => {
@@ -36,20 +39,22 @@ export default Ember.Controller.extend({
             }).on('transitionAnimated', () => {
                 this.registerCellListeners();
             });
-
-        this.initCalendarWidget();
     }),
 
     initCalendarWidget() {
         let self = this;
 
         Ember.run.schedule("afterRender", this, function() {
-
-            let calendar = new window.Flatpickr(Ember.$("#datepicker")[0], {
+            const $element = Ember.$("#datepicker")[0];
+            if (Ember.isNone($element)) {
+              //page is not fully initialized
+                return;
+            }
+            let calendar = new window.Flatpickr($element, {
                 inline: true,
                 "locale": "sk",
                 onChange(newDate) {
-                    self.set('selectedDay', newDate[0]);
+                    self.fetchTimetable(newDate[0]);
                 }
                 // onDayCreate(a, b, c, d) {
                 // console.log('day', a, b, c, d);
@@ -68,30 +73,53 @@ export default Ember.Controller.extend({
         }
 
         let newReservation = this.store.createRecord('reservation', {
-            id: `${Date.now()}`,
             startTime: bookingStart.toDate(),
             courtName
         });
         this.set('bookingDialogData', newReservation);
     },
 
-    timetableObserver: Ember.observer('selectedDay', function() {
-        if (Ember.isPresent(this.get('calendarWidget'))) {
-            this.get('calendarWidget').setDate(this.get('selectedDay'));
-        }
-        Ember.run.once(this, 'timetableObserverFn');
-    }),
+    fetchTimetable(newDayArg) {
+        const newDay = newDayArg || this.get('selectedDay');
+        const flashMessages = this.get('flashMessages');
 
-    timetableObserverFn() {
+        let $overlay = Ember.$('.loading-overlay');
+        let $bookingRow = Ember.$('.booking-row');
+        if ($bookingRow.length !== 0) {
+            let {
+                top,
+                left
+            } = $bookingRow[0].getBoundingClientRect();
+            $overlay.css({
+                top,
+                left,
+                width: $bookingRow.width(),
+                height: $bookingRow.height()
+            });
+            $overlay.show();
+        }
+        this.set('loadingTimetable', true);
         this.store.query('reservation', {
-            day: this.get('selectedDay').getTime(),
+            day: newDay.getTime(),
         }).then((result) => {
+            this.initCalendarWidget();
             this.set('reservations', result);
             this.set('updatedDate', Date.now());
+            this.set('selectedDay', newDay);
+        }).catch(() => {
+            flashMessages.error('Nepodarilo sa získať rozpis termínov.', {
+                sticky: true
+            });
+        }).finally(() => {
+            this.set('loadingTimetable', false);
+            $overlay.hide();
         });
-        //TODO error handling
 
     },
+
+    noTimetableData: Ember.computed('reservations', function() {
+        return this.get('reservations') === null;
+    }),
 
     findAvailableHalfCell($courtCell) {
         let $parent = $courtCell.parents('.court-cell');
@@ -183,21 +211,15 @@ export default Ember.Controller.extend({
     actions: {
 
         updateTimetable() {
-            this.timetableObserverFn();
+            this.fetchTimetable();
         },
 
         closeBookingDialog() {
             this.set('bookingDialogVisible', false);
         },
 
-        onBookingCreated(newBooking) {
-            let newBookingDay = moment(newBooking.get('startTime')).startOf('day').unix() * 1000;
-            let court = this.store.peekAll('court').find((court) => {
-                return court.get('day').getTime() === newBookingDay;
-            });
-            if (Ember.isPresent(court)) {
-                court.get('reservations').pushObject(newBooking);
-            }
+        onBookingCreated() {
+            return this.fetchTimetable();
         },
         onLastCourtTimetable() {
             this.registerCellListeners();
@@ -205,15 +227,18 @@ export default Ember.Controller.extend({
 
 
         jumpToToday() {
-            this.set('selectedDay', moment(this.get('currentDay')).subtract(1, 'day').toDate());
+            let newDate = moment(this.get('currentDay')).subtract(1, 'day').toDate();
+            this.fetchTimetable(newDate);
         },
 
         showPreviousDay() {
-            this.set('selectedDay', moment(this.get('selectedDay')).subtract(1, 'day').toDate());
+            let newDate = moment(this.get('selectedDay')).subtract(1, 'day').toDate();
+            this.fetchTimetable(newDate);
         },
 
         showNextDay() {
-            this.set('selectedDay', moment(this.get('selectedDay')).add(1, 'day').toDate());
+            let newDate = moment(this.get('selectedDay')).add(1, 'day').toDate();
+            this.fetchTimetable(newDate);
         }
     }
 });

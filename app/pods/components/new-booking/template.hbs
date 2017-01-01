@@ -1,4 +1,4 @@
-{{#paper-dialog class="flex-50" onClose=(action 'cancelBookingDialog') origin='.timetable' parent='body' clickOutsideToClose=true}}
+{{#paper-dialog class="flex-50 new-booking-dialog" onClose=(action 'cancelBookingDialog') origin='.timetable' parent='body' clickOutsideToClose=false}}
     <form>
         {{#paper-toolbar}}
             {{#paper-toolbar-tools}}
@@ -36,7 +36,7 @@
                         Na toto číslo vás budeme kontaktovať v prípade zmeny alebo zrušenia termínu.
                     </p>
                     <div class="value">
-                        {{paper-input class="phoneInput" required=true  errorMessages=(hash required="Zadajte telefónne číslo.")  value=newReservation.phone onChange=(action (mut newReservation.phone))}}
+                        {{paper-input class="phoneInput" required=true errorMessages=(hash required="Zadajte telefónne číslo.") value=newReservation.phone onChange=(action (mut newReservation.phone))}}
                     </div>
                 </div>
                 <div class="flex">
@@ -57,4 +57,7 @@
             {{#paper-button onClick=(action 'confirmBookingDialog')}}Rezervovať{{/paper-button}}
         {{/paper-dialog-actions}}
     </form>
+    <div class="loading-overlay" style="display: none;">
+        {{paper-progress-circular diameter=96}}
+    </div>
 {{/paper-dialog}}

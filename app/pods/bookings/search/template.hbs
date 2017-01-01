@@ -2,13 +2,17 @@
     <h2>Vyhľadávanie voľných termínov</h2>
 
     <div class="layout-row flex">
-        <div class="flex">
+        <div class="flex" style="max-width: 242px; margin-right: 100px;">
             <label>Vyberte dni</label>
-            <input id="datepicker" style="display: none;" />
+            <div class="calendar-container" style="margin-top: 10px;">
+
+                    <input id="datepicker-search" style="display: none;" />
+
+            </div>
         </div>
 
         <div class="flex layout-column layout-align-space-around-stretch">
-            <div class="flex">
+            <div class="flex" style="max-height: 100px;">
                 <label>Trvanie</label>
                 <div class="value">
                     {{#paper-button raised=true mini=true onClick=(action 'changeDuration' -0.5) disabled=canNotDecrementDuration}}-{{/paper-button}}
@@ -17,7 +21,7 @@
                 </div>
             </div>
 
-            <div class="flex" style="margin-top: 30px;">
+            <div class="flex">
                 <label>Čas od</label> {{time-picker value=timeFrom onChange=(action (mut timeFrom)) required=true errorMessages=(hash required="Vyplňte čas.")}}
                 <label>Čas do</label> {{time-picker value=timeUntil onChange=(action (mut timeUntil)) required=true errorMessages=(hash required="Vyplňte čas.") customValidations=timeUntilValidation}}
             </div>
@@ -26,7 +30,7 @@
     <div class="action-panel">
         {{#paper-button raised=true primary=true onClick=(action 'searchBooking')}}Hľadaj{{/paper-button}}
         {{#each generalValidations as |err|}}
-        <div class="validation-error">{{err}}</div>
+            <div class="validation-error">{{err}}</div>
         {{/each}}
     </div>
     {{#if searchPerformed}}

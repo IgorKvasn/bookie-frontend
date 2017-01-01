@@ -22,6 +22,8 @@ export default Ember.Component.extend({
     onBookingCreated: Ember.K,
     bookingDuration: 1,
 
+    flashMessages: Ember.inject.service(),
+
     emailValidation: [{
         message: 'Jedna alebo viacero emailových adries nemá správny formát.',
         validate: (inputValue) => {
@@ -65,15 +67,14 @@ export default Ember.Component.extend({
             this.get('onBookingClose')();
         },
         confirmBookingDialog() {
+            const flashMessages = this.get('flashMessages');
+            flashMessages.clearMessages();
             this.phoneInputValidationWorkaround();
 
             if (!validateNotificationFormat(this.get('newReservation.notifications'))) {
                 return;
             }
             if (Ember.isEmpty(this.get('newReservation.phone'))) {
-                this.set('phoneErrors', ['ahoj']);
-                this.set('propertyTypeIsInvalid', true);
-                this.set('propertyTypeErrorText', 'adadad');
                 return;
             }
 
@@ -81,14 +82,32 @@ export default Ember.Component.extend({
                 notifications: this.extractNotificationEmails(),
                 endTime: moment(this.get('newReservation.startTime')).add(this.get('bookingDuration'), 'hours').toDate()
             });
-
+            let $dialog = Ember.$('.new-booking-dialog');
+            let $loading = $dialog.find('.loading-overlay');
+            $loading.css({
+                width: $dialog.width(),
+                height: $dialog.height()
+            });
+            $loading.show();
             this.get('newReservation').save().then((result) => {
-                this.get('onBookingCreated')(result);
+                flashMessages.success('Rezervácia úspešná.', {
+                    timeout: 5000,
+                    sticky: false
+                });
+
+                this.get('onBookingCreated')(result).then(() => {
+                    this.get('onBookingClose')();
+                });
+
             }).catch(( /*error*/ ) => {
-                //TODO new reservation POST error handler
+                flashMessages.error('Chyba počas vytvorenia rezervácie.', {
+                    sticky: true
+                });
+                this.get('onBookingClose')();
+            }).finally(() => {
+                $loading.hide();
             });
 
-            this.get('onBookingClose')();
         }
     }
 });

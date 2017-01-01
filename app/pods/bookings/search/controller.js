@@ -23,7 +23,7 @@ export default Ember.Controller.extend({
 
         Ember.run.schedule("afterRender", this, function() {
 
-            let calendar = new window.Flatpickr(Ember.$("#datepicker")[0], {
+            let calendar = new window.Flatpickr(Ember.$("#datepicker-search")[0], {
                 inline: true,
                 mode: 'multiple',
                 "locale": "sk",
