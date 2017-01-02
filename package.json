@@ -11,7 +11,8 @@
     "url": "https://github.com/IgorKvasn/bookie-frontend"
   },
   "scripts": {
-    "build": "ember build",
+    "build-release": "ember build --environment=production",
+    "build-development": "ember build",
     "start": "ember server",
     "test": "ember test"
   },
