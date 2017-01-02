@@ -1,0 +1,150 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+  <parent>
+               <groupId>org.bookie</groupId>
+               <artifactId>bookieParent</artifactId>
+               <version>0.0.1-SNAPSHOT</version>
+       </parent>
+
+
+	<artifactId>BookieFrontend</artifactId>
+	<packaging>jar</packaging>
+
+	<properties>
+		<skipCleanEmber>false</skipCleanEmber>
+	</properties>
+
+	<build>
+
+		<plugins>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<configuration>
+					<installDirectory>${user.home}/tmpInstDir</installDirectory>
+					<nodeVersion>v6.9.1</nodeVersion>
+					<npmVersion>3.10.8</npmVersion>
+					<!-- <nodeDownloadRoot>http://nodejs.org/dist/</nodeDownloadRoot>  -->
+				</configuration>
+				<executions>
+					<execution>
+						<id>install-frontend-build-tools</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>bower install</id>
+						<goals>
+							<goal>bower</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>run test</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<skip>${skipJsTests}</skip>
+							<arguments>run test</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>build-frontend-production</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<skip>${emberDevelopmentBuild}</skip>
+							<arguments>run build-release</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>build-frontend-development</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<skip>${emberProductionBuild}</skip>
+							<arguments>run build-development</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>tmp</directory>
+								</fileset>
+								<fileset>
+									<directory>dist</directory>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+					<execution>
+						<id>cleanEmberDependencies</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<skip>${skipCleanEmber}</skip>
+							<filesets>
+								<fileset>
+									<directory>node_modules/</directory>
+								</fileset>
+								<fileset>
+									<directory>bower_components/</directory>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<!--
+    TODO "copy" ember related things to Java resources
+     <resources>
+			<resource>
+				<directory>${basedir}/dist/</directory>
+				<excludes>
+					<exclude>tests/</exclude>
+					<exclude>**/.gitkeep</exclude>
+					<exclude>testem.json</exclude>
+				</excludes>
+				<targetPath>META-INF/resources/</targetPath>
+			</resource>
+		</resources> -->
+	</build>
+</project>

@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-export function transitionTo(params/*, hash*/) {
+export function transitionTo(params /*, hash*/ ) {
   return params;
 }
 

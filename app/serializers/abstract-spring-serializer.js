@@ -6,13 +6,13 @@ import Ember from 'ember';
  */
 export default DS.RESTSerializer.extend(DS.EmbeddedRecordsMixin, {
 
-	serializeIntoHash: function (hash, type, record, options) {
-		var serialized = this.serialize(record, options);
+  serializeIntoHash: function(hash, type, record, options) {
+    var serialized = this.serialize(record, options);
 
-		//serializovany model nema v sebe ID, tkze je treba ho pridat takymto manualnym sposobom + kvoli Jacksonu (v pripade, ze sa pouziva sideloading na save)
-		serialized.id = record.id ? record.id : '';
+    //serializovany model nema v sebe ID, tkze je treba ho pridat takymto manualnym sposobom + kvoli Jacksonu (v pripade, ze sa pouziva sideloading na save)
+    serialized.id = record.id ? record.id : '';
 
-		//remove the root element
-		Ember.assign(hash, serialized);
-	}
+    //remove the root element
+    Ember.assign(hash, serialized);
+  }
 });

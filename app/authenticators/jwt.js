@@ -3,67 +3,67 @@ import Base from 'ember-simple-auth/authenticators/base';
 import config from '../config/environment';
 
 const {
-    RSVP: {
-        Promise
-    },
-    $: {
-        ajax
-    },
-    run
+  RSVP: {
+    Promise
+  },
+  $: {
+    ajax
+  },
+  run
 } = Ember;
 
 export default Base.extend({
-    tokenEndpoint: `${config.rootURL}api/auth_token`,
+  tokenEndpoint: `${config.rootURL}api/auth_token`,
 
-    restore(data) {
-        return new Promise((resolve, reject) => {
-            if (!Ember.isEmpty(data.token)) {
-                resolve(data);
-            } else {
-                reject();
-            }
-        });
-    },
+  restore(data) {
+    return new Promise((resolve, reject) => {
+      if (!Ember.isEmpty(data.token)) {
+        resolve(data);
+      } else {
+        reject();
+      }
+    });
+  },
 
-    authenticate(creds) {
+  authenticate(creds) {
+    const {
+      identification,
+      password
+    } = creds;
+    const data = JSON.stringify({
+      auth: {
+        email: identification,
+        password
+      }
+    });
+    const requestOptions = {
+      url: this.tokenEndpoint,
+      type: 'POST',
+      data,
+      contentType: 'application/json',
+      dataType: 'json'
+    };
+    return new Promise((resolve, reject) => {
+      ajax(requestOptions).then((response) => {
         const {
-            identification,
-            password
-        } = creds;
-        const data = JSON.stringify({
-            auth: {
-                email: identification,
-                password
-            }
+          jwt
+        } = response;
+        // Wrapping aync operation in Ember.run
+        run(() => {
+          resolve({
+            token: jwt
+          });
         });
-        const requestOptions = {
-            url: this.tokenEndpoint,
-            type: 'POST',
-            data,
-            contentType: 'application/json',
-            dataType: 'json'
-        };
-        return new Promise((resolve, reject) => {
-            ajax(requestOptions).then((response) => {
-                const {
-                    jwt
-                } = response;
-                // Wrapping aync operation in Ember.run
-                run(() => {
-                    resolve({
-                        token: jwt
-                    });
-                });
-            }, (error) => {
-                // Wrapping aync operation in Ember.run
-                run(() => {
-                    reject(error);
-                });
-            });
+      }, (error) => {
+        // Wrapping aync operation in Ember.run
+        run(() => {
+          reject(error);
         });
-    },
+      });
+    });
+  },
 
-    invalidate(data) {
-        return Promise.resolve(data);
-    }
+  invalidate(data) {
+    return Promise.resolve(data);
+  }
 });
