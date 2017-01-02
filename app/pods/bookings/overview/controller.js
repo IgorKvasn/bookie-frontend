@@ -3,6 +3,7 @@ import moment from 'moment';
 
 export default Ember.Controller.extend({
 
+    session: Ember.inject.service('session'),
     liquidFireEvents: Ember.inject.service(),
     flashMessages: Ember.inject.service(),
 
@@ -47,7 +48,7 @@ export default Ember.Controller.extend({
         Ember.run.schedule("afterRender", this, function() {
             const $element = Ember.$("#datepicker")[0];
             if (Ember.isNone($element)) {
-              //page is not fully initialized
+                //page is not fully initialized, yet
                 return;
             }
             let calendar = new window.Flatpickr($element, {
@@ -146,16 +147,18 @@ export default Ember.Controller.extend({
 
     registerCellListeners() {
         let self = this;
-        Ember.$('body .court-cell:not(.full-reserved, .old-hour) .half-cell').on('click.new-booking', function() {
-            let $this = Ember.$(this);
-            let $courtTimetable = $this.parents('.court-timetable');
-            let availableHalf = self.findAvailableHalfCell($this);
-            if (Ember.isNone(availableHalf)) {
-                //uz sa neda kam kliknut
-                return;
-            }
-            self.showCellPopup($courtTimetable.data('day'), $this.parents('.court-cell').data('hour'), availableHalf, $courtTimetable.data('courtName'));
-        });
+        if (this.get('session.isAuthenticated')) {
+            Ember.$('body .court-cell:not(.full-reserved, .old-hour) .half-cell').on('click.new-booking', function() {
+                let $this = Ember.$(this);
+                let $courtTimetable = $this.parents('.court-timetable');
+                let availableHalf = self.findAvailableHalfCell($this);
+                if (Ember.isNone(availableHalf)) {
+                    //uz sa neda kam kliknut
+                    return;
+                }
+                self.showCellPopup($courtTimetable.data('day'), $this.parents('.court-cell').data('hour'), availableHalf, $courtTimetable.data('courtName'));
+            });
+        }
 
         Ember.$('body .court-timetable .court-cell').on('mouseenter.booking-info', function() {
             let $courtInfo = Ember.$('.court-info-popup');
@@ -194,7 +197,11 @@ export default Ember.Controller.extend({
                 if (classes.includes('old-hour')) {
                     $courtInfo.find('.note').text('');
                 } else {
-                    $courtInfo.find('.note').text('Kliknite na rezervovanie');
+                    if (self.get('session.isAuthenticated')) {
+                        $courtInfo.find('.note').text('Kliknite na rezervovanie');
+                    } else {
+                        $courtInfo.find('.note').text('Na rezervovanie sa musíte prihlásiť.');
+                    }
                 }
             }
 

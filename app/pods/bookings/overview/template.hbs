@@ -1,12 +1,19 @@
 {{#if (and loadingTimetable noTimetableData)}}
-<div class="initial-booking-loading">
-    {{paper-progress-circular diameter=96}}
-  </div>
+    <div class="initial-booking-loading">
+        {{paper-progress-circular diameter=96}}
+    </div>
 {{else}}
 
-<div class="loading-overlay" style="display: none;">
-    {{paper-progress-circular diameter=96}}
-</div>
+    <div class="loading-overlay" style="display: none;">
+        {{paper-progress-circular diameter=96}}
+    </div>
+    {{#if (not session.isAuthenticated)}}
+        {{#paper-card class="not-logged-warning" as |card|}}
+            {{#card.content}}
+                Na rezervovanie termínu sa musíte prihlásiť.
+            {{/card.content}}
+        {{/paper-card}}
+    {{/if}}
 
     <div class="layout-row booking-row">
         <div class="timetable-container">

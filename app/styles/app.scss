@@ -113,13 +113,14 @@ md-sidenav.md-sidenav-left {
         border-color: color($primary, '400');
     }
 }
+
 .flatpickr-calendar.arrowTop:after,
 .flatpickr-calendar.arrowTop:before {
     border-bottom-color: transparent;
 }
 
-.calendar-container{
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+.calendar-container {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 
 .hint {
@@ -206,6 +207,13 @@ md-sidenav.md-sidenav-left {
             margin-left: auto;
             margin-right: auto;
         }
+    }
+
+    .not-logged-warning {
+        width: 100%;
+        background-color: color($primary, '700');
+        color: white;
+        text-align: center;
     }
 
     .week-control-panel {
@@ -356,8 +364,7 @@ md-sidenav.md-sidenav-left {
     margin-left: 20px;
     width: 100%;
 
-    .flatpickr-calendar {
-    }
+    .flatpickr-calendar {}
 
     md-input-container {
         margin: 0;
@@ -390,4 +397,31 @@ md-sidenav.md-sidenav-left {
 .reserved-cell {
     color: white;
     background: repeating-linear-gradient( -55deg, #666 1px, #777 2px, #777 11px, #666 12px, #666 20px );
+}
+
+.tm-login {
+    height: 100%;
+
+    .login-form {
+        padding: 10px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .login-error {
+        color: color($warn, '700');
+    }
+
+    .forgot-password {
+        font-size: 10px;
+    }
+
+    .login-loader {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    md-input-container {
+        margin: 0;
+    }
 }
