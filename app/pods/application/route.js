@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
+import config from '../../config/environment';
 
 
 export default Ember.Route.extend(ApplicationRouteMixin, {
@@ -8,11 +9,6 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
     this.get('moment').changeLocale('sk');
   },
   model() {
-    return this.store.queryRecord('app-config', {
-      app: 'ID_PROSET'
-    }).then((config) => {
-      this.configService.set('config', config);
-    }); //TODO identifikator kurtov - dotahovat napr. z environment.js, kde sa to bude injectiovat
-    //TODO error handling cez ember-flash messages
+    this.configService.set('config', config.bookieConfig);
   }
 });
