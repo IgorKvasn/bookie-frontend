@@ -56,13 +56,14 @@ export default Ember.Controller.extend({
 
     searchBooking() {
       this.set('generalValidations', []);
+      this.set('showDayError', false);
 
       this.validationWorkaround();
       if (this.get('timeFrom') > this.get('timeUntil')) {
         this.get('generalValidations').push('Čas "do" nemôže byť menší ako čas "od".');
       }
       if (Ember.isEmpty(this.get('selectedDays'))) {
-        this.get('generalValidations').push('Vyberte aspoň jeden deň.');
+        this.set('showDayError', true);
       }
 
       if (!Ember.isEmpty(this.get('generalValidations'))) {
@@ -72,7 +73,6 @@ export default Ember.Controller.extend({
         return;
       }
 
-      //TODO required validation
       this.set('searchResult', null);
       this.set('searchPerformed', false);
       this.set('subscribeNotificationsEmail', null);
@@ -84,7 +84,7 @@ export default Ember.Controller.extend({
         days: this.get('selectedDays')
 
       };
-      this.get('simpleAjax').doNonAuthorizedGet('/api/search-booking', options).then((result) => {
+      this.get('simpleAjax').get('/search-booking', options).then((result) => {
         this.set('searchResult', Ember.A(result));
         this.set('searchResultFound', !Ember.isEmpty(result));
         this.set('searchPerformed', true);

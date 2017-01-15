@@ -4,4 +4,6 @@
       - http://jreject.turnwheel.com/
       - https://browser-update.org/
 - pridad Google analytics (Ember + Google Analytics)
-- pridat FastClick - uz je pouzity v app.js
+
+- ked clovek nie je prihlaseny a klikne na hodinu (lebo si ju chce rezervovat)
+    -> vyhodit error dialog (nie flash message) s hlaskou, ze sa ma prihlasit/registrovat + button na prihlasenie/registraciu

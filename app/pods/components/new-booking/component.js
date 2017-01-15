@@ -23,6 +23,7 @@ export default Ember.Component.extend({
   bookingDuration: 1,
 
   flashMessages: Ember.inject.service(),
+  simpleAjax: Ember.inject.service(),
 
   emailValidation: [{
     message: 'Jedna alebo viacero emailových adries nemá správny formát.',
@@ -89,7 +90,8 @@ export default Ember.Component.extend({
         height: $dialog.height()
       });
       $loading.show();
-      this.get('newReservation').save().then((result) => {
+
+      this.get('simpleAjax').post('/booking', this.get('newReservation')).then((result) => {
         flashMessages.success('Rezervácia úspešná.', {
           timeout: 5000,
           sticky: false
@@ -100,7 +102,7 @@ export default Ember.Component.extend({
         });
 
       }).catch(( /*error*/ ) => {
-        flashMessages.error('Chyba počas vytvorenia rezervácie.', {
+        flashMessages.danger('Chyba počas vytvorenia rezervácie.', {
           sticky: true
         });
         this.get('onBookingClose')();

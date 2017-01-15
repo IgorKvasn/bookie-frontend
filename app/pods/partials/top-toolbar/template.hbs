@@ -1,0 +1,22 @@
+{{#paper-toolbar classNames="top-toolbar"}}
+  {{#paper-toolbar-tools}}
+    {{#paper-sidenav-toggle name="left" as |toggleAction|}}
+      {{#paper-button raised=true classNames="hide-gt-sm" onClick=(action toggleAction)}}
+        {{paper-icon "menu"}} Menu
+      {{/paper-button}}
+    {{/paper-sidenav-toggle}}
+
+    <h2 class="hide-gt-sm title">
+Bookie
+</h2>
+    <span class="flex"></span>
+    {{#if session.isAuthenticated}}
+      {{#menu-item active=(is-route-active 'account' currentRouteName) onClick=(action 'transitionTo' 'account')}}Môj účet{{/menu-item}}
+      {{#menu-item onClick=(action 'logout')}}Odhlásiť{{/menu-item}}
+    {{/if}}
+    {{#if (not session.isAuthenticated)}}
+      {{#menu-item active=(is-route-active 'register' currentRouteName) onClick=(action 'transitionTo' 'register')}}Registrácia{{/menu-item}}
+      {{#menu-item active=(is-route-active 'login' currentRouteName) onClick=(action 'transitionTo' 'login')}}Prihlásenie{{/menu-item}}
+    {{/if}}
+  {{/paper-toolbar-tools}}
+{{/paper-toolbar}}

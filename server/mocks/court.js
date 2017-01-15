@@ -10,8 +10,8 @@ module.exports = function(app) {
 
     var day = moment(new Date(parseInt(req.query.day, 10)));
 
-    res.send({
-      'court': [{
+    res.send(
+    [{
         id: Date.now() + '',
 
         reservations: [{
@@ -34,7 +34,7 @@ module.exports = function(app) {
           courtName: 'K4'
         }]
       }]
-    });
+    );
   });
 
   courtsRouter.post('/', function(req, res) {
@@ -42,18 +42,14 @@ module.exports = function(app) {
   });
 
   courtsRouter.get('/:id', function(req, res) {
-    res.send({
-      'court': {
+    res.send( {
         id: req.params.id
-      }
     });
   });
 
   courtsRouter.put('/:id', function(req, res) {
     res.send({
-      'court': {
         id: req.params.id
-      }
     });
   });
 

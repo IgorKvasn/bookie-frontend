@@ -8,8 +8,8 @@ module.exports = function(app) {
   reservationRouter.get('/', function(req, res) {
     var day = moment(new Date(parseInt(req.query.day, 10)));
     setTimeout(function() {
-      res.send({
-        'reservation': [{
+      res.send(
+      [{
           id: '2',
           startTime: day.startOf('day').minutes(30).hours(9).unix() * 1000, //utorok, 12/20/2016, 9:30:00 AM
           endTime: day.startOf('day').minutes(30).hours(12).unix() * 1000, //12:30
@@ -28,17 +28,17 @@ module.exports = function(app) {
           reservedFor: 'Jožko2 Jahoda2',
           courtName: 'K4'
         }]
-      });
-    }, 4000);
+      );
+    }, 2000);
 
   });
 
   reservationRouter.post('/', function(req, res) {
     var body = req.body;
-    body.reservation.id = Date.now() + '';
+    body.id = Date.now() + '';
     setTimeout(function() {
       res.send(body).status(201).end();
-    }, 3000);
+    }, 2000);
 
   });
 
@@ -71,6 +71,6 @@ module.exports = function(app) {
   // After installing, you need to `use` the body-parser for
   // this mock uncommenting the following line:
   //
-  app.use('/api/reservation', require('body-parser').json());
-  app.use('/api/reservation', reservationRouter);
+  app.use('/api/booking', require('body-parser').json());
+  app.use('/api/booking', reservationRouter);
 };

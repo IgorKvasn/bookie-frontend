@@ -6,7 +6,8 @@ module.exports = function(app) {
 
   userRouter.post('/', function(req, res) {
     setTimeout(function() {
-      if (req.body.password === 'a' && req.body.identification === 'a') {
+
+      if (req.body.auth.password === 'a' && req.body.auth.email === 'a') {
         res.status(200).send({
           token: 'this is ember mock token',
           email: 'jozko@gmail.com',
@@ -19,8 +20,6 @@ module.exports = function(app) {
       }
     }, 2000);
   });
-
-
 
 
   // The POST and PUT call will not contain a request body

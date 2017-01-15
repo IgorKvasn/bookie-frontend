@@ -6,6 +6,7 @@ export default Ember.Controller.extend({
   session: Ember.inject.service('session'),
   liquidFireEvents: Ember.inject.service(),
   flashMessages: Ember.inject.service(),
+  simpleAjax: Ember.inject.service(),
 
   reservations: null,
 
@@ -73,10 +74,10 @@ export default Ember.Controller.extend({
       bookingStart.minutes(30);
     }
 
-    let newReservation = this.store.createRecord('reservation', {
+    let newReservation = {
       startTime: bookingStart.toDate(),
       courtName
-    });
+    };
     this.set('bookingDialogData', newReservation);
   },
 
@@ -100,7 +101,7 @@ export default Ember.Controller.extend({
       $overlay.show();
     }
     this.set('loadingTimetable', true);
-    this.store.query('reservation', {
+    this.get('simpleAjax').get('/booking', {
       day: newDay.getTime(),
     }).then((result) => {
       this.initCalendarWidget();
@@ -108,7 +109,7 @@ export default Ember.Controller.extend({
       this.set('updatedDate', Date.now());
       this.set('selectedDay', newDay);
     }).catch(() => {
-      flashMessages.error('Nepodarilo sa získať rozpis termínov.', {
+      flashMessages.danger('Nepodarilo sa získať rozpis termínov.', {
         sticky: true
       });
     }).finally(() => {

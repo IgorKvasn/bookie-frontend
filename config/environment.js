@@ -42,6 +42,12 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV.bookieConfig = {
+      organizationName: 'proset',
+      hoursPerDay: 15,
+      startOfDay: 7,
+      courtNames: ['K1', 'K2', 'K3', 'K4']
+    };
   }
 
   if (environment === 'test') {

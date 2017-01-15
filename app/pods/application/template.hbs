@@ -1,47 +1,35 @@
 {{#each flashMessages.queue as |flash|}}
-    {{flash-message flash=flash}}
+  {{flash-message flash=flash}}
 {{/each}}
 
 <div class="page-content">
-    {{#paper-sidenav-container class="inner-sidenav" }}
+  {{#paper-sidenav-container class="inner-sidenav" }}
 
-        {{#paper-sidenav class="md-whiteframe-z2" name="left" open=leftSideBarOpen onToggle=(action (mut leftSideBarOpen)) }}
-            {{#paper-toolbar as |toolbar|}}
+    {{#paper-sidenav class="md-whiteframe-z2" name="left" open=leftSideBarOpen onToggle=(action (mut leftSideBarOpen)) }}
+      {{#paper-toolbar as |toolbar|}}
 
-                {{#paper-toolbar-tools}}
-                    <div class="logo layout-column layout-align-center-center">
-                        <img src="/logo.svg">
-                        <div>Bookie</div>
-                    </div>
-                {{/paper-toolbar-tools}}
+        {{#paper-toolbar-tools}}
+          {{#link-to 'bookings.overview' class="logo layout-column layout-align-center-center" }}
+            <img src="/logo.svg">
+            <div>Bookie</div>
+          {{/link-to}}
+        {{/paper-toolbar-tools}}
 
-            {{/paper-toolbar}}
-            {{#paper-content padding=true}}
-                {{#menu-item active=(is-route-active 'bookings' currentRouteName) onClick=(action 'transitionTo' 'bookings')}}Rezervácie{{/menu-item}}
+      {{/paper-toolbar}}
+      {{#paper-content padding=true}}
+        {{#menu-item active=(is-route-active 'bookings.overview' currentRouteName) onClick=(action 'transitionTo' 'bookings.overview')}}Rozvrh{{/menu-item}}
+        {{#menu-item active=(is-route-active 'bookings.search' currentRouteName) onClick=(action 'transitionTo' 'bookings.search')}}Vyhľadávanie{{/menu-item}}
 
-                {{#if session.isAuthenticated}}
-                    {{#menu-item active=(is-route-active 'account' currentRouteName) onClick=(action 'transitionTo' 'account')}}Môj účet{{/menu-item}}
-                    {{#menu-item onClick=(action 'logout')}}Odhlásiť{{/menu-item}}
-                {{/if}}
-                {{#if (not session.isAuthenticated)}}
-                    {{#menu-item active=(is-route-active 'register' currentRouteName) onClick=(action 'transitionTo' 'register')}}Registrácia{{/menu-item}}
-                    {{#menu-item active=(is-route-active 'login' currentRouteName) onClick=(action 'transitionTo' 'login')}}Prihlásenie{{/menu-item}}
-                {{/if}}
-            {{/paper-content}}
-        {{/paper-sidenav}}
-        {{#paper-card-content class="flex" }}
-            <div class="page-header">
-            </div>
-            <div class="layout-fill layout-align-start-start layout-column">
-                {{outlet}}
+    {{/paper-content}}
+    {{/paper-sidenav}}
+    {{#paper-card-content class="flex" }}
+      <div class="page-header">
+      {{partial 'partials/top-toolbar'}}
+      </div>
+      <div class="layout-fill layout-align-start-start layout-column">
+        {{outlet}}
 
-                {{#paper-sidenav-toggle name="left" as |toggleAction|}}
-                    {{#paper-button raised=true classNames="hide-gt-sm" onClick=(action toggleAction)}}
-                        Toggle
-                    {{/paper-button}}
-                {{/paper-sidenav-toggle}}
-
-            </div>
-        {{/paper-card-content}}
-    {{/paper-sidenav-container}}
+      </div>
+    {{/paper-card-content}}
+  {{/paper-sidenav-container}}
 </div>
