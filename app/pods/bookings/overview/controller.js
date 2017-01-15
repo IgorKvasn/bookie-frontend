@@ -13,8 +13,16 @@ export default Ember.Controller.extend({
   bookingDialogVisible: false,
   bookingDialogData: null,
 
-  startOfDay: Ember.computed.alias('configService.config.startOfDay'),
-  hoursPerDay: Ember.computed.alias('configService.config.hoursPerDay'),
+  startOfDay: Ember.computed('configService.config.season.timeStart', function() {
+    return this.get('configService.config.season.timeStart') / 60;
+  }),
+
+  hoursPerDay: Ember.computed('configService.config.timeEnd', function() {
+    let start = this.get('configService.config.timeStart');
+    let end = this.get('configService.config.timeEnd');
+    return (start - end) / 60;
+  }),
+
   courtNamesArray: Ember.computed('configService.config.courtNames', function() {
     return new Ember.A(this.get('configService.config.courtNames'));
   }),

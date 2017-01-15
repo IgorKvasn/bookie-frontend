@@ -43,9 +43,17 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
     ENV.bookieConfig = {
-      organizationName: 'proset',
-      hoursPerDay: 15,
-      startOfDay: 7,
+      organization:{
+        name: 'proset',
+        email: 'stefan.ba@proset.sk',
+        phone: '0904123456'
+      },
+      season:{
+        name: 'Zima 2016/2017',
+        dateStart: new Date(),
+        timeStart: 7,
+        timeEnd: 22
+      },
       courtNames: ['K1', 'K2', 'K3', 'K4']
     };
   }
